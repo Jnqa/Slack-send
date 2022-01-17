@@ -5,7 +5,7 @@ inputs:
     description: 'Comment'
     required: true
     default: 'None'
-  SLACK_BOT_TOKEN:
+  SLACK_TOKEN:
     description: 'SLACK TOKEN'
     required: true
     default: ''
@@ -13,7 +13,7 @@ inputs:
     description: 'Slack channels ID where message will be posted (separated with ,)'
     required: true
     default: '' 
-  FILE_NAME:
+  FILENAME:
     description: 'Attachment'
     required: false
     default: ''
@@ -35,10 +35,11 @@ runs:
 
         client = WebClient(token=os.environ.get("${{ inputs.SLACK_BOT_TOKEN }}"))
         file_name = "${{ inputs.FILE_NAME }}"
-        channel_id = "[${{ inputs.CHANNELS }}]"
+        channel_id = "${{ inputs.CHANNELS }}"
 
         try:
             result = client.files_upload(channels=channel_id,initial_comment="${{ inputs.MESSAGE_TEXT }}",file=file_name,)
         except SlackApiError as e:
             print("Error uploading file: {}".format(e))
+
         print("It's ok")
