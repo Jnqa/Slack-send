@@ -31,7 +31,7 @@ runs:
         from slack_sdk import WebClient
         from slack_sdk.errors import SlackApiError
 
-        client = WebClient(token=os.environ.get("${{ inputs.SLACK_BOT_TOKEN }}"))
+        client = WebClient(token="${{ inputs.SLACK_BOT_TOKEN }}")
         file_name = "${{ inputs.FILE_NAME }}"
         channel_id = "${{ inputs.CHANNELS }}"
 
