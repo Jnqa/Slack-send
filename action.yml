@@ -28,5 +28,5 @@ runs:
       shell: python3 {0}
       run: |
         import telebot
-        tbot = telebot.TeleBot(${{ inputs.BOTKEY }}, None)
+        tbot = telebot.TeleBot(${{ inputs.BOTKEY }})
         tbot.send_message(chat_id="${{ inputs.CHAT_ID }}", text=f"${{ inputs.MESSAGE_TEXT }}", parse_mode='html')
