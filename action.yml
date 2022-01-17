@@ -36,7 +36,7 @@ runs:
         channel_id = "${{ inputs.CHANNELS }}"
 
         try:
-            result = client.files_upload(channels=channel_id,initial_comment="${{ inputs.MESSAGE_TEXT }}",file=file_name,)
+            result = client.files_upload(channels=channel_id,initial_comment="""${{ inputs.MESSAGE_TEXT }}""",file=file_name,)
         except SlackApiError as e:
             print("Error uploading file: {}".format(e))
 
