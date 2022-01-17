@@ -8,7 +8,7 @@ inputs:
   SLACK_TOKEN:
     description: 'SLACK TOKEN'
     required: true
-    default: ''
+    default: 'no token'
   CHANNELS:
     description: 'Slack channels ID where message will be posted (separated with ,)'
     required: true
@@ -31,7 +31,7 @@ runs:
         from slack_sdk import WebClient
         from slack_sdk.errors import SlackApiError
 
-        client = WebClient("${{ inputs.SLACK_BOT_TOKEN }}")
+        client = WebClient(token="${{ inputs.SLACK_TOKEN }}")
 
         try:
             result = client.files_upload(channels="${{ inputs.CHANNELS }}",initial_comment="""${{ inputs.MESSAGE_TEXT }}""",file="${{ inputs.FILE_NAME }}",)
