@@ -1,19 +1,22 @@
 name: 'Upload to S3'
 description: ''
 inputs:
-  BOTKEY:
-    description: 'TELEGRAM BOTKEY'
-    required: true
-    default: ''
-  CHAT_ID:
-    description: 'TELEGRAM CHATID'
-    required: true
-    default: ''
   MESSAGE_TEXT:
-    description: 'TEXT'
+    description: 'Comment'
     required: true
     default: 'None'
-
+  SLACK_BOT_TOKEN:
+    description: 'SLACK TOKEN'
+    required: true
+    default: ''
+  CHANNELS:
+    description: 'Slack channels ID where message will be posted (separated with ,)'
+    required: true
+    default: '' 
+  FILE_NAME:
+    description: 'Attachment'
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -24,9 +27,18 @@ runs:
         pip3 install slack_sdk
         pip3 install pytelegrambotapi # for testing
 
-    - name: Run Scripts
+    - name: Run Script
       shell: python3 {0}
       run: |
-        import telebot
-        tbot = telebot.TeleBot("${{ inputs.BOTKEY }}", parse_mode='html')
-        tbot.send_message(chat_id="${{ inputs.CHAT_ID }}", text=f"${{ inputs.MESSAGE_TEXT }}")
+        from slack_sdk import WebClient
+        from slack_sdk.errors import SlackApiError
+
+        client = WebClient(token=os.environ.get("${{ inputs.SLACK_BOT_TOKEN }}"))
+        file_name = "${{ inputs.FILE_NAME }}"
+        channel_id = "[${{ inputs.CHANNELS }}]"
+
+        try:
+            result = client.files_upload(channels=channel_id,initial_comment="${{ inputs.MESSAGE_TEXT }}",file=file_name,)
+        except SlackApiError as e:
+            print("Error uploading file: {}".format(e))
+        print("It's ok")
