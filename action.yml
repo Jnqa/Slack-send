@@ -1,0 +1,34 @@
+name: 'Upload to S3'
+description: ''
+inputs:
+  BOTKEY:
+    description: 'TELEGRAM BOTKEY'
+    required: true
+    default: ''
+  CHAT_ID:
+    description: 'TELEGRAM CHATID'
+    required: true
+    default: ''
+  MESSAGE_TEXT:
+    description: 'TEXT'
+    required: true
+    default: 'None'
+
+
+runs:
+  using: "composite"
+  steps: 
+    - name: Install lybraries 
+      shell: bash
+      run: |
+        pip install slack_sdk
+        pip install pytelegrambotapi # for testing
+
+    - name: Run Scripts
+      shell: python
+      run: |
+        import telebot
+        from telebot import types
+        tbot = telebot.TeleBot(${{ inputs.BOTKEY }}, None)
+        chatid = "${{ inputs.CHAT_ID }}"
+        mess = tbot.send_message(chat_id=chatid, text=f"${{ inputs.MESSAGE_TEXT }}", parse_mode='html')
