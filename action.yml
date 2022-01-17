@@ -31,13 +31,12 @@ runs:
         from slack_sdk import WebClient
         from slack_sdk.errors import SlackApiError
 
-        client = WebClient(token="${{ inputs.SLACK_BOT_TOKEN }}")
-        file_name = "${{ inputs.FILE_NAME }}"
-        channel_id = "${{ inputs.CHANNELS }}"
+        client = WebClient("${{ inputs.SLACK_BOT_TOKEN }}")
 
         try:
-            result = client.files_upload(channels=channel_id,initial_comment="""${{ inputs.MESSAGE_TEXT }}""",file=file_name,)
+            result = client.files_upload(channels="${{ inputs.CHANNELS }}",initial_comment="""${{ inputs.MESSAGE_TEXT }}""",file="${{ inputs.FILE_NAME }}",)
         except SlackApiError as e:
             print("Error uploading file: {}".format(e))
+            result = e
 
-        print("It's ok")
+        print(f"It's ok?\n{result}")
