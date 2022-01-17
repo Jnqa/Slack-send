@@ -21,14 +21,12 @@ runs:
     - name: Install lybraries 
       shell: bash
       run: |
-        pip install slack_sdk
-        pip install pytelegrambotapi # for testing
+        pip3 install slack_sdk
+        pip3 install pytelegrambotapi # for testing
 
     - name: Run Scripts
       shell: python3 {0}
       run: |
         import telebot
-        from telebot import types
         tbot = telebot.TeleBot(${{ inputs.BOTKEY }}, None)
-        chatid = "${{ inputs.CHAT_ID }}"
-        mess = tbot.send_message(chat_id=chatid, text=f"${{ inputs.MESSAGE_TEXT }}", parse_mode='html')
+        tbot.send_message(chat_id="${{ inputs.CHAT_ID }}", text=f"${{ inputs.MESSAGE_TEXT }}", parse_mode='html')
