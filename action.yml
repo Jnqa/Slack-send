@@ -21,11 +21,9 @@ inputs:
 runs:
   using: "composite"
   steps: 
-    - name: Install lybraries 
+    - name: Install slack_sdk 
       shell: bash
-      run: |
-        pip3 install slack_sdk
-        pip3 install pytelegrambotapi # for testing
+      run: pip3 install slack_sdk
 
     - name: Run Script
       shell: python3 {0}
