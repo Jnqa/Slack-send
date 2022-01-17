@@ -34,7 +34,7 @@ runs:
         client = WebClient(token="${{ inputs.SLACK_TOKEN }}")
 
         try:
-            result = client.files_upload(channels="${{ inputs.CHANNELS }}",initial_comment="""${{ inputs.MESSAGE_TEXT }}""",file="${{ inputs.FILE_NAME }}",)
+            result = client.files_upload(channels="${{ inputs.CHANNELS }}",initial_comment="""${{ inputs.MESSAGE_TEXT }}""",file="${{ inputs.FILENAME }}",)
         except SlackApiError as e:
             print("Error uploading file: {}".format(e))
             result = e
