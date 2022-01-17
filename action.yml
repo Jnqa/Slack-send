@@ -25,7 +25,7 @@ runs:
         pip install pytelegrambotapi # for testing
 
     - name: Run Scripts
-      shell: python
+      shell: python3
       run: |
         import telebot
         from telebot import types
