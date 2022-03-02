@@ -24,7 +24,7 @@ runs:
     - name: Send via curl
       shell: bash
       run: |
-        curl --data-binary -F file=@${{ inputs.FILENAME }} \
-        -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
+        curl -F file=@${{ inputs.FILENAME }} \
+        --data-binary "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
         -F channels=${{ inputs.CHANNELS }} \
-        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" https://slack.com/api/files.upload | sleep 120
+        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" https://slack.com/api/files.upload | sleep 74
