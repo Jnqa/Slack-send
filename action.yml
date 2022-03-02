@@ -21,21 +21,10 @@ inputs:
 runs:
   using: "composite"
   steps: 
-    - name: Install slack_sdk 
+    - name: Send via curl
       shell: bash
-      run: pip3 install slack_sdk
-
-    - name: Run Script
-      shell: python3 {0}
       run: |
-        from slack_sdk import WebClient
-        from slack_sdk.errors import SlackApiError
-
-        client = WebClient(token="${{ inputs.SLACK_TOKEN }}")
-
-        if "${{ inputs.FILENAME }}"":
-          result = client.files_upload(channels="${{ inputs.CHANNELS }}",initial_comment="""${{ inputs.MESSAGE_TEXT }}""",file="${{ inputs.FILENAME }}",)
-          print(result)
-        else:
-          response = client.chat_postMessage(channel="${{ inputs.CHANNELS }}", text="""${{ inputs.MESSAGE_TEXT }}""" )
-          print(response)
+        curl --data-binary -F file=@${{ inputs.FILENAME }} \
+        -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
+        -F channels=${{ inputs.CHANNELS }} \
+        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" https://slack.com/api/files.upload | sleep 120
