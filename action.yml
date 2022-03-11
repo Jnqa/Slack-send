@@ -84,39 +84,26 @@ runs:
         echo $response | jq -r
         echo TS=$($response | jq -r ".ts") >> $GITHUB_ENV
 
-#    - name: Run Script
-#      shell: bash
-#      run: |
-#        response=$(curl --connect-timeout 74 \
-#                -F file=@${{ inputs.FILENAME }} \
-#                -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
-#                -F channels=${{ inputs.CHANNELS }} \
-#                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-#                https://slack.com/api/files.upload)
-#        echo Response:
-#        echo $response | jq -r '.'
+    - name: Run Script upd
+      shell: bash
+      run: |
+        response=$(curl --connect-timeout 74 \
+                -F file=@${{ inputs.FILENAME }} \
+                -F channel=${{ inputs.CHANNELS }} \
+                -F ts=${{ env.TS }} \
+                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                https://slack.com/api/chat.update)
+        echo Response upd:
+        echo $response | jq -r
 
-  - name: Run Script upd
-    shell: bash
-    run: |
-      response=$(curl --connect-timeout 74 \
-              -F file=@${{ inputs.FILENAME }} \
-              -F channel=${{ inputs.CHANNELS }} \
-              -F ts=${{ env.TS }} \
-              -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-              https://slack.com/api/chat.update)
-      echo Response upd:
-      echo $response | jq -r
-
-
-  - name: Run Script react
-    shell: bash
-    run: |
-      response=$(curl --connect-timeout 74 \
-              -F name="card_file_box" \
-              -F channel=${{ inputs.CHANNELS }} \
-              -F timestamp=${{ env.TS }} \
-              -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-              https://slack.com/api/reactions.add)
-      echo Response react:
-      echo $response | jq -r
+    - name: Run Script react
+      shell: bash
+      run: |
+        response=$(curl --connect-timeout 74 \
+                -F name="card_file_box" \
+                -F channel=${{ inputs.CHANNELS }} \
+                -F timestamp=${{ env.TS }} \
+                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                https://slack.com/api/reactions.add)
+        echo Response react:
+        echo $response | jq -r
