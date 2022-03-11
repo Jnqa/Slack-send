@@ -26,6 +26,7 @@ inputs:
     required: false
     default: '⚠ Ошибка прикрепления файла'
 
+
 runs:
   using: "composite"
   steps: 
@@ -56,3 +57,4 @@ runs:
                   -d channel=${{ inputs.CHANNELS }} \
                   -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                   https://slack.com/api/chat.postMessage)
+
