@@ -56,11 +56,11 @@ runs:
         echo TS2 is $TS2
 
 #         response=$(curl -d blocks="[{\"type\": \"section\", \"text\": {\"type\": \"plain_text\", \"text\": \"Editable? ${{ inputs.ERROR_TEXT }}\"}}]" \
-     #file=@${{ inputs.FILENAME }} \
+     #
     - name: Attach file
       shell: bash
       run: |
-        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F "content=launch plan" \
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@${{ inputs.FILENAME }} \
                 -F channels=${{ inputs.CHANNELS }} \
                 -F thread_ts=${{ env.TS2 }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
@@ -69,7 +69,7 @@ runs:
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
         response=$(curl -d channel="${{ env.CHANNEL }}" \
-                        -d file_ids="$FILEID" \
+                        -d file_ids=["$FILEID"] \
                         -d "ts=${{ env.TS }}" \
                         -d "text=${{ inputs.MESSAGE_TEXT }}" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
@@ -77,7 +77,7 @@ runs:
         echo $response
         echo "All ok!"
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
-                        -d file_ids="$FILEID" \
+                        -d file_ids=["$FILEID"] \
                         -d "ts=${{ env.TS2 }}" \
                         -d attachments="[{\"pretext\": \"${{ inputs.MESSAGE_TEXT }}\"}]" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
