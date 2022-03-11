@@ -56,6 +56,7 @@ runs:
                         https://slack.com/api/chat.postMessage)
         echo $response | jq -r
         TS2=$(echo $response | jq -r ".ts")
+        CHANNEL=$(echo $response | jq -r ".channel") && echo "CHANNEL=$CHANNEL" >> $GITHUB_ENV || echo "nope"
         echo "TS2=$TS2" >> $GITHUB_ENV
         echo TS2 is $TS2
     - name: Attach file
@@ -69,7 +70,7 @@ runs:
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV || echo $response
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
-        response=$(curl -F channel="${{ inputs.CHANNELS }}" \
+        response=$(curl -F channel="${{ env.CHANNEL }}" \
                         -F "file_ids=$FILEID" \
                         -F ts=${{ env.TS }} \
                         -F "text=${{ inputs.MESSAGE_TEXT }}" \
@@ -77,7 +78,7 @@ runs:
                         https://slack.com/api/chat.update)
         echo $response
         echo "All ok!"
-        response2=$(curl -d channel="#${{ inputs.CHANNELS }}" \
+        response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d "file_ids=$FILEID" \
                         -d "ts=${{ env.TS2 }}" \
                         -d "text=${{ inputs.MESSAGE_TEXT }}" \
