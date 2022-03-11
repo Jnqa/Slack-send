@@ -38,13 +38,9 @@ runs:
                 -F channels=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload)
-        echo step 0 - ok
         STATUS=$(echo $response | jq -r ".ok")
-        echo step 0.1 - ok
         echo "STATUS=$STATUS" >> $GITHUB_ENV
-        echo step 0.2 - ok
         echo $response | jq -r
-        echo step 1 - ok
 
     - name: Check status
       if: env.STATUS == 'false'
