@@ -45,7 +45,7 @@ runs:
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/files.upload)
         echo $response | jq -r
-        echo TS=$(echo $response | jq -r ".file.timestamp")
+        TS=$(echo $response | jq -r ".file.timestamp")
         echo "TS=$TS" >> $GITHUB_ENV
         echo TS is $TS
 
@@ -55,7 +55,7 @@ runs:
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
         echo $response | jq -r
-        echo TS2=$(echo $response | jq -r ".ts")
+        TS2=$(echo $response | jq -r ".ts")
         echo "TS2=$TS2" >> $GITHUB_ENV
         echo TS2 is $TS2
     - name: Attach file
@@ -66,7 +66,7 @@ runs:
                 -F thread_ts="${{ env.TS }}" \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload)
-        STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV && echo $response | jq -r || echo $response
+        STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV || echo $response
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
         response=$(curl -F channel="${{ inputs.CHANNELS }}" \
