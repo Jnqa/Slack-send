@@ -59,6 +59,11 @@ runs:
                         https://slack.com/api/chat.update)
         echo "All ok!"
 
+    - name: Check status
+          if: env.STATUS != 'true'
+          shell: bash
+          run: |
+            exit 1
 
 #    - name: Check status
 #      if: env.STATUS != 'true'
