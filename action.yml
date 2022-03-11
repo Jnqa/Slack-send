@@ -28,7 +28,7 @@ runs:
     - name: Send via curl
       shell: bash
       run: |
-        curl -F file=@${{ inputs.FILENAME }} \
+        curl --connect-timeout 74 -F file=@${{ inputs.FILENAME }} \
         -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
         -F channels=${{ inputs.CHANNELS }} \
         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
