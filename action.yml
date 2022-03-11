@@ -37,20 +37,15 @@ runs:
     - name: Send via curl
       shell: bash
       run: |
-        echo uploading... > status.txt
-        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@status.txt \
-                        -F "initial_comment=${{ inputs.MESSAGE_TEXT }} ${{ inputs.UPLOADIND_TEXT }}" \
+        response=$(curl -F text="${{ inputs.MESSAGE_TEXT }} ${{ inputs.UPLOADIND_TEXT }}" \
                         -F channels=${{ inputs.CHANNELS }} \
-                        -F thread_ts="${{ env.TS }}" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                        https://slack.com/api/files.upload)
+                        https://slack.com/api/chat.postMessage)
         echo $response | jq -r
-        TS=$(echo $response | jq -r ".file.timestamp")
+        TS=$(echo $response | jq -r ".ts")
         echo "TS=$TS" >> $GITHUB_ENV
         echo TS is $TS
-
-        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
-                        -d text="Editable? ${{ inputs.ERROR_TEXT }}" \
+        response=$(curl -d blocks=[{"type": "section", "text": {"type": "plain_text", "text": "Editable? ${{ inputs.ERROR_TEXT }}"}}] \
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
@@ -71,15 +66,15 @@ runs:
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
         response=$(curl -d channel="${{ env.CHANNEL }}" \
-                        -d "file_ids=$FILEID" \
-                        -d ts=${{ env.TS }} \
+                        -d file_ids="$FILEID" \
+                        -d "ts=${{ env.TS }}" \
                         -d "text=${{ inputs.MESSAGE_TEXT }}" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.update)
         echo $response
         echo "All ok!"
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
-                        -d "file_ids=$FILEID" \
+                        -d file_ids="$FILEID" \
                         -d "ts=${{ env.TS2 }}" \
                         -d "text=${{ inputs.MESSAGE_TEXT }}" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
