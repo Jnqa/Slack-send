@@ -45,21 +45,25 @@ runs:
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/files.upload)
         echo $response | jq -r
-        echo TS=$(echo $response | jq -r ".file.timestamp") >> $GITHUB_ENV
+        echo TS=$(echo $response | jq -r ".file.timestamp")
+        echo "TS=$TS" >> $GITHUB_ENV
+        echo TS is $TS
 
-#
-#        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
-#                        -d text="${{ inputs.MESSAGE_TEXT }} ${{ inputs.ERROR_TEXT }}" \
-#                        -d channel=${{ inputs.CHANNELS }} \
-#                        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-#                        https://slack.com/api/chat.postMessage)
-
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
+                        -d text="Editable? ${{ inputs.ERROR_TEXT }}" \
+                        -d channel=${{ inputs.CHANNELS }} \
+                        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                        https://slack.com/api/chat.postMessage)
+        echo $response | jq -r
+        echo TS2=$(echo $response | jq -r ".ts")
+        echo "TS2=$TS2" >> $GITHUB_ENV
+        echo TS2 is $TS2
     - name: Attach file
       shell: bash
       run: |
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@${{ inputs.FILENAME }} \
                 -F channels=${{ inputs.CHANNELS }} \
-                -F thread_ts=${{ env.TS }} \
+                -F thread_ts="${{ env.TS }}" \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload)
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV && echo $response | jq -r || echo $response
@@ -72,6 +76,13 @@ runs:
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }} updated" \
                         https://slack.com/api/chat.update)
         echo "All ok!"
+        response2=$(curl -F channel="${{ inputs.CHANNELS }}" \
+                        -F file_ids=$FILEID \
+                        -F ts=${{ env.TS2 }} \
+                        -F text="${{ inputs.MESSAGE_TEXT }}" \
+                        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }} updated" \
+                        https://slack.com/api/chat.update)
+        echo "All ok2!"
 
     - name: Check status
       if: env.STATUS != 'true'
