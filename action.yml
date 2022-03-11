@@ -51,8 +51,7 @@ runs:
                 https://slack.com/api/files.upload)
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV && echo $response | jq -r || echo $response
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
-        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }}
-                        -d channel="${{ inputs.CHANNELS }}" \
+        response=$(curl -d channel="${{ inputs.CHANNELS }}" \
                         -d file_ids="${{ env.FILEID }}" \
                         -d ts="${{ env.TS }}" \
                         -d text="${{ inputs.MESSAGE_TEXT }}" \
