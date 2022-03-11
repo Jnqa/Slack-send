@@ -38,7 +38,7 @@ runs:
       shell: bash
       run: |
         response=$(curl -F text="${{ inputs.MESSAGE_TEXT }} ${{ inputs.UPLOADIND_TEXT }}" \
-                        -F channels=${{ inputs.CHANNELS }} \
+                        -F channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
         echo $response | jq -r
