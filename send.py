@@ -21,7 +21,9 @@ try:
     try:
         if "${{ inputs.FILENAME }}":
             response = client.files_upload(channels="${{ inputs.CHANNELS }}",
+                                           content="file",
                                            file="${{ inputs.FILENAME }}",
+                                           filetype="zip",
                                            thread_ts=message_ts)
             print(f"Result(with file):\n{response}")
         try:
