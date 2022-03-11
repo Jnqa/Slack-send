@@ -54,7 +54,7 @@ runs:
                 print(f"Result(with file):\n{response}")
         except Exception as error:
             print(f"ERR! Error: \n{error}")
-            response = client.chat_update(channels="${{ inputs.CHANNELS }}",
+            response = client.chat_update(channel="${{ inputs.CHANNELS }}",
                                           text="""${{ inputs.MESSAGE_TEXT }}${{ inputs.ERROR_TEXT }}""",
                                           ts=message_ts)
             print(f"Result:\n{response}")
