@@ -34,10 +34,10 @@ runs:
       shell: bash
       run: |
         response=$(curl --connect-timeout 74 -F file=@${{ inputs.FILENAME }} \
-        -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
-        -F channels=${{ inputs.CHANNELS }} \
-        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-        https://slack.com/api/files.upload }})
+                -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
+                -F channels=${{ inputs.CHANNELS }} \
+                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                https://slack.com/api/files.upload)
         echo STATUS=$($response | jq -r ".ok") >> $GITHUB_ENV
         echo $response | jq -r
 
