@@ -76,9 +76,8 @@ runs:
       shell: bash
       run: |
         response=$(curl --connect-timeout 74 \
-                -F file=@${{ inputs.FILENAME }} \
-                -F blocks=[{"type": "section", "text": {"type": "plain_text", "text": "${{ inputs.MESSAGE_TEXT }}"}}] \
-                -F channel=${{ inputs.CHANNELS }} \
+                -d text="${{ inputs.MESSAGE_TEXT }}" \
+                -d channel=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
         echo Response:
