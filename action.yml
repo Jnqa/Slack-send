@@ -47,6 +47,7 @@ runs:
       run: |
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@${{ inputs.FILENAME }} \
                 -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
+                -F thread_ts="${{ env.TS }}" \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload)
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV && echo $response | jq -r || echo $response
