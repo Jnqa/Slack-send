@@ -19,7 +19,16 @@ try:
         print(f"Result(with file):\n{response}")
 except Exception as error:
     print(f"ERR! Error: \n{error}")
-    response = client.chat_update(channel="${{ inputs.CHANNELS }}",
-                                  text="""${{ inputs.MESSAGE_TEXT }}${{ inputs.ERROR_TEXT }}""",
-                                  ts=message_ts)
+    try:
+        response = client.chat_update(channel="""${{ inputs.CHANNELS }}""",
+                                      text="""${{ inputs.MESSAGE_TEXT }}${{ inputs.ERROR_TEXT }}""",
+                                      ts=message_ts)
+    except Exception as Error:
+        print(f"ERR! Error chat.update: \n{error}")
+    try:
+        response = client.reactions_add(channel="""${{ inputs.CHANNELS }}""",
+                                        name="card_file_box",
+                                        ts=message_ts)
+    except Exception as Error:
+        print(f"ERR! Error reactions_add: \n{error}")
     print(f"Result:\n{response}")
