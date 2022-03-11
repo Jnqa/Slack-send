@@ -26,6 +26,7 @@ inputs:
     required: false
     default: '⚠ Ошибка прикрепления файла'
 
+
 runs:
   using: "composite"
   steps: 
