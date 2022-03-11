@@ -45,7 +45,7 @@ runs:
         TS=$(echo $response | jq -r ".ts")
         echo "TS=$TS" >> $GITHUB_ENV
         echo TS is $TS
-        response=$(curl -d blocks=[ { "type": "section", "text": {"type": "plain_text", "text": "Editable? ${{ inputs.ERROR_TEXT }}" } } ] \
+        response=$(curl -d blocks="[{\"type\": \"section\", \"text\": {\"type\": \"plain_text\", \"text\": \"Editable? ${{ inputs.ERROR_TEXT }}\"}}] \
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
