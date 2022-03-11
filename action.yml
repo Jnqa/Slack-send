@@ -41,6 +41,7 @@ runs:
         STATUS=$($response | jq -r ".ok") >> $GITHUB_ENV
         echo "STATUS=$STATUS" >> $GITHUB_ENV
         echo $response | jq -r
+        echo step 1 - ok
 
     - name: Check status
       if: env.STATUS == 'false'
