@@ -56,10 +56,11 @@ runs:
         echo TS2 is $TS2
 
 #         response=$(curl -d blocks="[{\"type\": \"section\", \"text\": {\"type\": \"plain_text\", \"text\": \"Editable? ${{ inputs.ERROR_TEXT }}\"}}]" \
+     #file=@${{ inputs.FILENAME }} \
     - name: Attach file
       shell: bash
       run: |
-        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F content=@${{ inputs.FILENAME }} \
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F "content=launch plan" \
                 -F channels=${{ inputs.CHANNELS }} \
                 -F thread_ts=${{ env.TS2 }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
