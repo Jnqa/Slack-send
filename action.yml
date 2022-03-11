@@ -35,11 +35,11 @@ runs:
       run: |
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@${{ inputs.FILENAME }} \
                 -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
-                -F channels=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload)
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV && echo $response | jq -r || echo $response
 
+#                -F channels=${{ inputs.CHANNELS }} \
     - name: Check status
       if: env.STATUS != 'true'
       shell: bash
@@ -54,7 +54,6 @@ runs:
         echo "Emoji"
         sleep 3
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
-                -F file=@${{ inputs.FILENAME }} \
                 -d text=":card_file_box:" \
                 -d thread_ts=$TS \
                 -d channel=${{ inputs.CHANNELS }} \
