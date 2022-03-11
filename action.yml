@@ -76,7 +76,7 @@ runs:
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids="$FILEID" \
                         -d "ts=${{ env.TS2 }}" \
-                        -d "text=${{ inputs.MESSAGE_TEXT }}" \
+                        -d blocks="[{\"type\": \"section\", \"text\": {\"type\": \"plain_text\", \"text\": \"${{ inputs.MESSAGE_TEXT }}\"},\"type\": \"file\", \"external_id\": \"$FILEID\", \"source\": \"remote\" }]" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.update)
         echo $response2
