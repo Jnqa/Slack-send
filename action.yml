@@ -77,12 +77,25 @@ runs:
       run: |
         response=$(curl --connect-timeout 74 \
                 -F file=@${{ inputs.FILENAME }} \
-                -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
-                -F channels=${{ inputs.CHANNELS }} \
+                -F blocks=[{"type": "section", "text": {"type": "plain_text", "text": "${{ inputs.MESSAGE_TEXT }}"}}] \
+                -F channel=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/files.upload)
+                https://slack.com/api/chat.postMessage)
         echo Response:
-        echo $response
+        echo $response | jq -r
+
+#    - name: Run Script
+#      shell: bash
+#      run: |
+#        response=$(curl --connect-timeout 74 \
+#                -F file=@${{ inputs.FILENAME }} \
+#                -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
+#                -F channels=${{ inputs.CHANNELS }} \
+#                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+#                https://slack.com/api/files.upload)
+#        echo Response:
+#        echo $response | jq -r '.'
+
 #   - name: Run Script upd react
 #     shell: bash
 #     run: |
