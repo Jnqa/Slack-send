@@ -17,6 +17,10 @@ inputs:
     description: 'Attachment'
     required: false
     default: ''
+  TIMEOUT:
+    description: 'for large files'
+    required: false
+    default: '74'
   ERROR_TEXT:
     description: 'Message, if file was not uploaded'
     required: false
@@ -26,84 +30,31 @@ inputs:
 runs:
   using: "composite"
   steps: 
-#    - name: Install slack_sdk
-#      shell: bash
-#      run: pip3 install slack_sdk
-
-#    - name: Run Script
-#      shell: python3 {0}
-#      run: |
-#        from slack_sdk import WebClient
-#        from slack_sdk.errors import SlackApiError
-#
-#        client = WebClient(token="${{ inputs.SLACK_TOKEN }}")
-#
-#        message_ts = None
-#
-#        try:
-#            response_main = client.chat_postMessage(channel="${{ inputs.CHANNELS }}", text="""${{ inputs.MESSAGE_TEXT }}""")
-#            print(f"Result(Main):\n{response_main}")
-#            try:
-#                message_ts = response_main["ts"]
-#            except Exception as err:
-#                print(f"ERR! No message_ts cuz: {err}")
-#            try:
-#                response = client.chat_update(channel="""${{ inputs.CHANNELS }}""",
-#                                              text="""${{ inputs.MESSAGE_TEXT }}${{ inputs.ERROR_TEXT }}""",
-#                                              ts=message_ts)
-#            except Exception as Error:
-#                print(f"ERR! Error chat.update: \n{Error}")
-#            try:
-#                if "${{ inputs.FILENAME }}":
-#                    response = client.files_upload(channels="${{ inputs.CHANNELS }}",
-#                                                   content="file",
-#                                                   file="${{ inputs.FILENAME }}",
-#                                                   filetype="zip",
-#                                                   thread_ts=message_ts)
-#                    print(f"Result(with file):\n{response}")
-#                try:
-#                    response = client.reactions_add(channel="""${{ inputs.CHANNELS }}""",
-#                                                    name="card_file_box",
-#                                                    ts=message_ts)
-#                except Exception as Error:
-#                    print(f"ERR! Error reactions_add: \n{Error}")
-#            except Exception as Error:
-#                print(f"ERR! Error files_upload: \n{Error}")
-#        except Exception as error:
-#            print(f"ERR! Error: \n{error}")
-
-    - name: Run Script
+    - name: Send via curl
       shell: bash
       run: |
-        response=$(curl --connect-timeout 74 \
-                -d text="${{ inputs.MESSAGE_TEXT }}" \
-                -d channel=${{ inputs.CHANNELS }} \
-                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/chat.postMessage)
-        echo Response:
-        echo $response | jq -r
-        echo TS=$($response | jq -r ".ts") >> $GITHUB_ENV
+        response=$(curl --connect-timeout 74 -F file=@${{ inputs.FILENAME }} \
+        -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
+        -F channels=${{ inputs.CHANNELS }} \
+        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+        https://slack.com/api/files.upload | sleep ${{ inputs.TIMEOUT }})
+        echo STATUS=$($response | jq -r ".ok") >> $GITHUB_ENV
 
-    - name: Run Script upd
+    - name: Check status
+      if: ${{ env.STATUS == "false" }}
       shell: bash
-      run: |
-        response=$(curl --connect-timeout 74 \
-                -F file=@${{ inputs.FILENAME }} \
-                -F channel=${{ inputs.CHANNELS }} \
-                -F ts=${{ env.TS }} \
-                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/chat.update)
-        echo Response upd:
-        echo $response | jq -r
+        run: |
+          response=$(curl --connect-timeout 74 \
+                  -d text="${{ inputs.MESSAGE_TEXT }}${{ inputs.ERROR_TEXT }}" \
+                  -d channel=${{ inputs.CHANNELS }} \
+                  -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                  https://slack.com/api/chat.postMessage)
+          echo TS=$($response | jq -r ".ts") >> $GITHUB_ENV
+          sleep 3
+          response=$(curl --connect-timeout 74 \
+                  -d text=":card_file_box:" \
+                  -d ts=${{ env.TS }} \
+                  -d channel=${{ inputs.CHANNELS }} \
+                  -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                  https://slack.com/api/chat.postMessage)
 
-    - name: Run Script react
-      shell: bash
-      run: |
-        response=$(curl --connect-timeout 74 \
-                -F name="card_file_box" \
-                -F channel=${{ inputs.CHANNELS }} \
-                -F timestamp=${{ env.TS }} \
-                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/reactions.add)
-        echo Response react:
-        echo $response | jq -r
