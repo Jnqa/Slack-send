@@ -63,7 +63,7 @@ runs:
       run: |
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@${{ inputs.FILENAME }} \
                 -F channels=${{ inputs.CHANNELS }} \
-                -F thread_ts="${{ env.TS2 }}" \
+                -F thread_ts=${{ env.TS2 }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload)
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV || echo $response
@@ -71,7 +71,7 @@ runs:
         echo File_id - $FILEID
         response=$(curl -F channel="${{ inputs.CHANNELS }}" \
                         -F file_ids=$FILEID \
-                        -F ts="${{ env.TS }}" \
+                        -F ts=${{ env.TS }} \
                         -F text="${{ inputs.MESSAGE_TEXT }}" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }} updated" \
                         https://slack.com/api/chat.update)
