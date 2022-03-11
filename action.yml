@@ -37,23 +37,27 @@ runs:
         -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
         -F channels=${{ inputs.CHANNELS }} \
         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-        https://slack.com/api/files.upload | sleep ${{ inputs.TIMEOUT }})
+        https://slack.com/api/files.upload }})
         echo STATUS=$($response | jq -r ".ok") >> $GITHUB_ENV
+        echo $response | jq -r
 
     - name: Check status
       if: ${{ env.STATUS }} == "false"
       shell: bash
       run: |
-        response=$(curl --connect-timeout 74 \
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -d text="${{ inputs.MESSAGE_TEXT }}${{ inputs.ERROR_TEXT }}" \
                 -d channel=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
         echo TS=$($response | jq -r ".ts") >> $GITHUB_ENV
+        echo $response | jq -r
+        echo "Emoji"
         sleep 3
         response=$(curl --connect-timeout 74 \
                 -d text=":card_file_box:" \
-                -d ts=${{ env.TS }} \
+                -d thread_ts=${{ env.TS }} \
                 -d channel=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
+        echo $response | jq -r
