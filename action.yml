@@ -17,77 +17,27 @@ inputs:
     description: 'Attachment'
     required: false
     default: ''
-  ERROR_TEXT:
-    description: 'Message, if file was not uploaded'
-    required: false
-    default: '⚠ Ошибка прикрепления файла'
-
 
 runs:
   using: "composite"
   steps: 
-#    - name: Install slack_sdk
-#      shell: bash
-#      run: pip3 install slack_sdk
-
-#    - name: Run Script
-#      shell: python3 {0}
-#      run: |
-#        from slack_sdk import WebClient
-#        from slack_sdk.errors import SlackApiError
-#
-#        client = WebClient(token="${{ inputs.SLACK_TOKEN }}")
-#
-#        message_ts = None
-#
-#        try:
-#            response_main = client.chat_postMessage(channel="${{ inputs.CHANNELS }}", text="""${{ inputs.MESSAGE_TEXT }}""")
-#            print(f"Result(Main):\n{response_main}")
-#            try:
-#                message_ts = response_main["ts"]
-#            except Exception as err:
-#                print(f"ERR! No message_ts cuz: {err}")
-#            try:
-#                response = client.chat_update(channel="""${{ inputs.CHANNELS }}""",
-#                                              text="""${{ inputs.MESSAGE_TEXT }}${{ inputs.ERROR_TEXT }}""",
-#                                              ts=message_ts)
-#            except Exception as Error:
-#                print(f"ERR! Error chat.update: \n{Error}")
-#            try:
-#                if "${{ inputs.FILENAME }}":
-#                    response = client.files_upload(channels="${{ inputs.CHANNELS }}",
-#                                                   content="file",
-#                                                   file="${{ inputs.FILENAME }}",
-#                                                   filetype="zip",
-#                                                   thread_ts=message_ts)
-#                    print(f"Result(with file):\n{response}")
-#                try:
-#                    response = client.reactions_add(channel="""${{ inputs.CHANNELS }}""",
-#                                                    name="card_file_box",
-#                                                    ts=message_ts)
-#                except Exception as Error:
-#                    print(f"ERR! Error reactions_add: \n{Error}")
-#            except Exception as Error:
-#                print(f"ERR! Error files_upload: \n{Error}")
-#        except Exception as error:
-#            print(f"ERR! Error: \n{error}")
+    - name: Install slack_sdk 
+      shell: bash
+      run: pip3 install slack_sdk
 
     - name: Run Script
-      shell: bash
+      shell: python3 {0}
       run: |
-        response=$(curl --connect-timeout 74 \
-                -F file=@${{ inputs.FILENAME }} \
-                -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
-                -F channels=${{ inputs.CHANNELS }} \
-                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/files.upload)
-        echo Response:
-        echo $response
-#   - name: Run Script upd react
-#     shell: bash
-#     run: |
-#       curl --connect-timeout 74 \
-#               -F channel=${{ inputs.CHANNELS }} \
-#               -F ts=${{ inputs.CHANNELS }} \
-#               -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-#               https://slack.com/api/chat.update
+        from slack_sdk import WebClient
+        from slack_sdk.errors import SlackApiError
+
+        client = WebClient(token="${{ inputs.SLACK_TOKEN }}")
+
+        if "${{ inputs.FILENAME }}":
+          result = client.files_upload(channels="${{ inputs.CHANNELS }}",
+                                       initial_comment="""${{ inputs.MESSAGE_TEXT }}""",
+                                       file="${{ inputs.FILENAME }}",)
+          print(f"Result is:\n{result}")
+        else:
+          response = client.chat_postMessage(channel="${{ inputs.CHANNELS }}", text="""${{ inputs.MESSAGE_TEXT }}""" )
+          print(response)
