@@ -70,10 +70,10 @@ runs:
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV || echo $response
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
-        response=$(curl -F channel="${{ env.CHANNEL }}" \
-                        -F "file_ids=$FILEID" \
-                        -F ts=${{ env.TS }} \
-                        -F "text=${{ inputs.MESSAGE_TEXT }}" \
+        response=$(curl -d channel="${{ env.CHANNEL }}" \
+                        -d "file_ids=$FILEID" \
+                        -d ts=${{ env.TS }} \
+                        -d "text=${{ inputs.MESSAGE_TEXT }}" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.update)
         echo $response
