@@ -89,7 +89,7 @@ runs:
                       "type": "section", \
                       "text": { \
                         "type": "mrkdwn", \
-                        "text": "${{ inputs.MESSAGE_TEXT }} $FILETEXT" \
+                        "text": "${{ inputs.MESSAGE_TEXT }} ${FILETEXT}" \
                       } \
                     }, \
                     { \
@@ -110,7 +110,7 @@ runs:
                       ] \
                     } \
                   ]'
-        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":heavy_check_mark::robot_face:*Android* (${{ github.ref_name }}) $FILETEXT"}}]'
+        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":heavy_check_mark::robot_face:*Android* (${{ github.ref_name }}) $FILETEXT "}},{"type": "divider"}]'
         echo er check 1
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
