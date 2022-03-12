@@ -70,6 +70,7 @@ runs:
         echo $response | jq -r
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV || echo $response
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
+        FILENAME=$(echo $response | jq -r ".file.name") && echo "FILENAME=$FILENAME" >> $GITHUB_ENV || echo "nope"
         FILEURL=$(echo $response | jq -r ".file.url_private_download") && echo "FILEURL=$FILEURL" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
         sleep 3
@@ -81,7 +82,34 @@ runs:
                         https://slack.com/api/chat.update)
         echo $response
         echo "All ok!"
-        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": "${{ inputs.MESSAGE_TEXT }}"}}]'
+        FILETEXT="<:card_file_box: *$FILENAME*|$FILEURL>"
+        # BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": "${{ inputs.MESSAGE_TEXT }}"}}]'
+        BLOCKS='[ \
+                    { \
+                      "type": "section", \
+                      "text": { \
+                        "type": "mrkdwn", \
+                        "text": ":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_" \
+                      } \
+                    }, \
+                    { \
+                      "type": "divider" \
+                    }, \
+                    { \
+                      "type": "actions", \
+                      "elements": [ \
+                        { \
+                          "type": "button", \
+                          "text": { \
+                            "type": "plain_text", \
+                            "text": ":card_file_box: *$FILENAME*", \
+                            "emoji": true \
+                          }, \
+                          "url": "$FILEURL" \
+                        } \
+                      ] \
+                    } \
+                  ]'
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
                         -d "ts=${{ env.TS2 }}" \
