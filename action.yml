@@ -45,7 +45,7 @@ runs:
         TS=$(echo $response | jq -r ".ts")
         echo "TS=$TS" >> $GITHUB_ENV
         echo TS is $TS
-        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_"}}]'
+        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}) *${{ github.actor }}*: ${{ github.event.head_commit.message }} :sonic:'
         response=$(curl -d blocks="$BLOCKS" \
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
@@ -73,7 +73,7 @@ runs:
         FILENAME=$(echo $response | jq -r ".file.name") && echo "FILENAME=$FILENAME" >> $GITHUB_ENV || echo "nope"
         FILEURL=$(echo $response | jq -r ".file.url_private_download") && echo "FILEURL=$FILEURL" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
-        FILETEXT="<:card_file_box: *$FILENAME*|$FILEURL>"
+        FILETEXT="<$FILEURL|:card_file_box: *$FILENAME*>"
         sleep 3
         response=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
@@ -83,12 +83,13 @@ runs:
                         https://slack.com/api/chat.update)
         echo $response
         echo "All ok!"
+        sleep 3
         BLOCKS='[ \
                     { \
                       "type": "section", \
                       "text": { \
                         "type": "mrkdwn", \
-                        "text": ":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_" \
+                        "text": "${{ inputs.MESSAGE_TEXT }} $FILETEXT" \
                       } \
                     }, \
                     { \
