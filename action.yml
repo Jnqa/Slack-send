@@ -49,8 +49,8 @@ runs:
                                                       \"text\": { \
                                                         \"type\": \"mrkdwn\", \
                                                         \"text\": \":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_\" \
-                                        }, \
-                                        \"text\": \"${{ inputs.UPLOADIND_TEXT }}\"}]" \
+                                                      } \ 
+                                    }]" \
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
