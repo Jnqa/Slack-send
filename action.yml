@@ -49,7 +49,7 @@ runs:
                                         \"blocks\": { \"type\": \"section\", \
                                                       \"text\": { \
                                                         \"type\": \"mrkdwn\", \
-                                                        \"text\": \":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_" \
+                                                        \"text\": \":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_\" \
                                         } \
                                         }, \
                                         \"text\": \"${{ inputs.UPLOADIND_TEXT }}\"}]" \
