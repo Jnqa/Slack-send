@@ -110,7 +110,7 @@ runs:
                       ] \
                     } \
                   ]'
-        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":heavy_check_mark::robot_face:*Android* (${{ github.ref_name }}) $FILETEXT "}},{"type": "divider"}]'
+        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":heavy_check_mark::robot_face:*Android* (${{ github.ref_name }}) "}},{"type": "divider"},{"type": "actions",elements": [{"type": "button","text": {"type": "plain_text","text": ":card_file_box: *$FILENAME*","emoji": true},"url": "https://google.com"}]}]'
         echo er check 1
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
