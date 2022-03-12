@@ -37,27 +37,23 @@ runs:
     - name: Send via curl
       shell: bash
       run: |
-        response=$(curl -F text="${{ inputs.MESSAGE_TEXT }} ${{ inputs.UPLOADIND_TEXT }}" \
-                        -F channel=${{ inputs.CHANNELS }} \
-                        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                        https://slack.com/api/chat.postMessage)
-        echo $response | jq -r
-        TS=$(echo $response | jq -r ".ts")
-        echo "TS=$TS" >> $GITHUB_ENV
-        echo TS is $TS
-        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}) *${{ github.actor }}*: ${{ github.event.head_commit.message }} :sonic:"}}]'
+        BLOCKS='[{"type": "section", 
+                  "text": 
+                    { 
+                    "type": "mrkdwn", 
+                    "text": ":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}) *${{ github.actor }}*: ${{ github.event.head_commit.message }} :sonic:"
+                    }
+                  }]'
         response=$(curl -d blocks="$BLOCKS" \
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
         echo $response | jq -r
-        TS2=$(echo $response | jq -r ".ts")
+        TS=$(echo $response | jq -r ".ts")
         CHANNEL=$(echo $response | jq -r ".channel") && echo "CHANNEL=$CHANNEL" >> $GITHUB_ENV || echo "nope"
-        echo "TS2=$TS2" >> $GITHUB_ENV
-        echo TS2 is $TS2
+        echo "TS=$TS" >> $GITHUB_ENV
+        echo TS is $TS
 
-#         response=$(curl -d blocks="[{\"type\": \"section\", \"text\": {\"type\": \"plain_text\", \"text\": \"Editable? ${{ inputs.ERROR_TEXT }}\"}}]" \
-     #
     - name: Attach file
       shell: bash
       run: |
@@ -73,16 +69,6 @@ runs:
         FILENAME=$(echo $response | jq -r ".file.name") && echo "FILENAME=$FILENAME" >> $GITHUB_ENV || echo "nope"
         FILEURL=$(echo $response | jq -r ".file.url_private_download") && echo "FILEURL=$FILEURL" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
-        FILETEXT="<$FILEURL|:card_file_box: *$FILENAME*>"
-        sleep 3
-        response=$(curl -d channel="${{ env.CHANNEL }}" \
-                        -d file_ids=["$FILEID"] \
-                        -d "ts=${{ env.TS }}" \
-                        -d "text=${{ inputs.MESSAGE_TEXT }} $FILETEXT" \
-                        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                        https://slack.com/api/chat.update)
-        echo $response
-        echo "All ok!"
         sleep 3
 
     - name: update message
@@ -106,7 +92,7 @@ runs:
                           "type": "button",
                           "text": {
                             "type": "plain_text",
-                            "text": ":card_file_box: *${{ env.FILENAME }}*",
+                            "text": ":card_file_box: ${{ env.FILENAME }}",
                             "emoji": true
                           },
                           "url": "${{ env.FILEURL }}"
@@ -117,7 +103,7 @@ runs:
         echo er check 1
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
-                        -d "ts=${{ env.TS2 }}" \
+                        -d "ts=${{ env.TS }}" \
                         -d blocks="$BLOCKS" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.update)
