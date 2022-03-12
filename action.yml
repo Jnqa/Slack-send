@@ -105,7 +105,7 @@ runs:
                             "text": ":card_file_box: *$FILENAME*",
                             "emoji": true
                           },
-                          "url": "$FILEURL"
+                          "url": "https://google.com"
                         }
                       ]
                     }
