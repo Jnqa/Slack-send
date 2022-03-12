@@ -72,6 +72,7 @@ runs:
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
         FILEURL=$(echo $response | jq -r ".file.url_private_download") && echo "FILEURL=$FILEURL" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
+        sleep 3
         response=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
                         -d "ts=${{ env.TS }}" \
