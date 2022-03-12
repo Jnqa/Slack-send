@@ -110,7 +110,9 @@ runs:
                       ] \
                     } \
                   ]'
-        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":heavy_check_mark::robot_face:*Android* (${{ github.ref_name }}) "}},{"type": "divider"},{"type": "section", "text": {"type": "mrkdwn", "text": ":card_file_box: *${FILENAME}* "}}]'
+        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":heavy_check_mark::robot_face:*Android* (${{ github.ref_name }}) "}},\
+        {"type": "divider"},\
+        {"type": "section", "text": {"type": "mrkdwn", "text": ":card_file_box: *${FILENAME}* "}}]'
         echo er check 1
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
