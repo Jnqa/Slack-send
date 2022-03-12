@@ -61,18 +61,16 @@ runs:
     - name: Attach file
       shell: bash
       run: |
-        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@${{ inputs.FILENAME }} \
-                -F channels=${{ inputs.CHANNELS }} \
-                -F thread_ts=${{ env.TS }} \
-                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/files.upload) 
+        # response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@${{ inputs.FILENAME }} \
+        #         -F channels=${{ inputs.CHANNELS }} \
+        #         -F thread_ts=${{ env.TS }} \
+        #         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+        #         -X POST https://slack.com/api/files.upload) 
+        response=$(wget -qO- --post-data="channels=${{ inputs.CHANNELS }}&thread_ts=${{ env.TS }}" \
+                --post-file="${{ inputs.FILENAME }}" \
+                --header="Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                https://slack.com/api/files.upload)
         echo "FILE:"
-        echo $response | jq -r || \
-                  response=$(curl -d files=${{ inputs.FILENAME }} \
-                          -d channel=${{ inputs.CHANNELS }} \
-                          -d ts_from=${{ env.TS }} \
-                          -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                          https://slack.com/api/files.list)
         echo $response | jq -r
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV || echo $response
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
