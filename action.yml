@@ -82,8 +82,6 @@ runs:
                         https://slack.com/api/chat.update)
         echo $response
         echo "All ok!"
-        FILETEXT="<:card_file_box: *$FILENAME*|$FILEURL>"
-        # BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": "${{ inputs.MESSAGE_TEXT }}"}}]'
         BLOCKS='[ \
                     { \
                       "type": "section", \
@@ -110,6 +108,7 @@ runs:
                       ] \
                     } \
                   ]'
+        echo er check 1
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
                         -d "ts=${{ env.TS2 }}" \
