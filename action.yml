@@ -46,7 +46,7 @@ runs:
         echo "TS=$TS" >> $GITHUB_ENV
         echo TS is $TS
         BLOCKS='[{"type": "section", "text": {"type": "plain_text", "text": "Hello world"}}]'
-        response=$(curl -d blocks="$BLOCKS"
+        response=$(curl -d blocks="$BLOCKS" \
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
