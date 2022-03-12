@@ -73,11 +73,12 @@ runs:
         FILENAME=$(echo $response | jq -r ".file.name") && echo "FILENAME=$FILENAME" >> $GITHUB_ENV || echo "nope"
         FILEURL=$(echo $response | jq -r ".file.url_private_download") && echo "FILEURL=$FILEURL" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
+        FILETEXT="<:card_file_box: *$FILENAME*|$FILEURL>"
         sleep 3
         response=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
                         -d "ts=${{ env.TS }}" \
-                        -d "text=${{ inputs.MESSAGE_TEXT }} $FILEURL" \
+                        -d "text=${{ inputs.MESSAGE_TEXT }} $FILETEXT" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.update)
         echo $response
