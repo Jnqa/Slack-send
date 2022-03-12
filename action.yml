@@ -72,7 +72,7 @@ runs:
                           -d channel=${{ inputs.CHANNELS }} \
                           -d ts_from=${{ env.TS }} \
                           -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                          https://slack.com/api/files.upload)
+                          https://slack.com/api/files.list)
         echo $response | jq -r
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV || echo $response
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
