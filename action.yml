@@ -45,12 +45,7 @@ runs:
         TS=$(echo $response | jq -r ".ts")
         echo "TS=$TS" >> $GITHUB_ENV
         echo TS is $TS
-        response=$(curl -d blocks="[{ \"type\": \"section\", \
-                                                      \"text\": { \
-                                                        \"type\": \"mrkdwn\", \
-                                                        \"text\": \":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_\" \
-                                                      } \ 
-                                    }]" \
+        response=$(curl -d blocks="[{\"type\": \"section\", \"text\": {\"type\": \"plain_text\", \"text\": \"Hello world\"}}]"
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
