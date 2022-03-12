@@ -45,7 +45,14 @@ runs:
         TS=$(echo $response | jq -r ".ts")
         echo "TS=$TS" >> $GITHUB_ENV
         echo TS is $TS
-        response=$(curl -d attachments="[{\"pretext\": \"pre-hello\", \"text\": \"text-world\"}]" \
+        response=$(curl -d attachments="[{\"color\": \"#f2c744\", \
+                                        \"blocks\": { \"type\": \"section\", \
+                                                      \"text\": { \
+                                                        \"type\": \"mrkdwn\", \
+                                                        \"text\": \":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_" \
+                                        } \
+                                        }, \
+                                        \"text\": \"${{ inputs.UPLOADIND_TEXT }}\"}]" \
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.postMessage)
@@ -69,11 +76,12 @@ runs:
         echo $response | jq -r
         STATUS=$(echo $response | jq -r ".ok") && echo "STATUS=$STATUS" >> $GITHUB_ENV || echo $response
         FILEID=$(echo $response | jq -r ".file.id") && echo "FILEID=$FILEID" >> $GITHUB_ENV || echo "nope"
+        FILEURL=$(echo $response | jq -r ".file.url_private_download") && echo "FILEURL=$FILEURL" >> $GITHUB_ENV || echo "nope"
         echo File_id - $FILEID
         response=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
                         -d "ts=${{ env.TS }}" \
-                        -d "text=${{ inputs.MESSAGE_TEXT }}" \
+                        -d "text=${{ inputs.MESSAGE_TEXT }} $FILEURL" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.update)
         echo $response
