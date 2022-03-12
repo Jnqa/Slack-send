@@ -63,7 +63,7 @@ runs:
       run: |
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} -F file=@${{ inputs.FILENAME }} \
                 -F channels=${{ inputs.CHANNELS }} \
-                -F thread_ts=${{ env.TS2 }} \
+                -F thread_ts=${{ env.TS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload)
         echo "FILE:"
@@ -84,12 +84,16 @@ runs:
         echo $response
         echo "All ok!"
         sleep 3
+
+    - name: update message
+      shell: bash
+      run: |
         BLOCKS='[
                     {
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "${{ inputs.MESSAGE_TEXT }} ${FILETEXT}"
+                        "text": "${{ inputs.MESSAGE_TEXT }}"
                       }
                     },
                     {
@@ -102,10 +106,10 @@ runs:
                           "type": "button",
                           "text": {
                             "type": "plain_text",
-                            "text": ":card_file_box: *$FILENAME*",
+                            "text": ":card_file_box: *${{ env.FILENAME }}*",
                             "emoji": true
                           },
-                          "url": "https://google.com"
+                          "url": "${{ env.FILEURL }}"
                         }
                       ]
                     }
