@@ -45,7 +45,7 @@ runs:
         TS=$(echo $response | jq -r ".ts")
         echo "TS=$TS" >> $GITHUB_ENV
         echo TS is $TS
-        BLOCKS='[{"type": "section", "text": {"type": "plain_text", "text": "Hello world"}}]'
+        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": ":arrow_forward:*${{ github.workflow }}* (${{ github.ref_name }}):sonic:\n*${{ github.actor }}*: _${{ github.event.head_commit.message }}_"}}]'
         response=$(curl -d blocks="$BLOCKS" \
                         -d channel=${{ inputs.CHANNELS }} \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
@@ -80,10 +80,11 @@ runs:
                         https://slack.com/api/chat.update)
         echo $response
         echo "All ok!"
+        BLOCKS='[{"type": "section", "text": {"type": "mrkdwn", "text": "${{ inputs.MESSAGE_TEXT }}"}}]'
         response2=$(curl -d channel="${{ env.CHANNEL }}" \
                         -d file_ids=["$FILEID"] \
                         -d "ts=${{ env.TS2 }}" \
-                        -d blocks="[{\"pretext\": \"${{ inputs.MESSAGE_TEXT }}\"}]" \
+                        -d blocks="$BLOCKS" \
                         -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                         https://slack.com/api/chat.update)
         echo $response2
