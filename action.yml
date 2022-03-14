@@ -39,13 +39,14 @@ runs:
                 -d channel=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
-        echo TS=$($response | jq -r ".ts") >> $GITHUB_ENV
+        TS=$($response | jq -r ".ts") 
+        echo "TS=$TS" >> $GITHUB_ENV
 
     - name: Check status and Send again curl
       if: inputs.FILENAME != ''
       shell: bash
       run: |
-        echo "Send file({{ inputs.FILENAME }}) to Slack"
+        echo "Send file(${{ inputs.FILENAME }}) to Slack on =${{ env.TS }}"
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -F file=@${{ inputs.FILENAME }} \
                 -F thread_ts=${{ env.TS }} \
