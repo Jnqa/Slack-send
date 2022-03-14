@@ -30,21 +30,26 @@ inputs:
 runs:
   using: "composite"
   steps: 
-    - name: Check status and Send again curl
+    - name: Send Text
       shell: bash
       run: |
+        echo "Send Message to Slack"
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -d text="${{ inputs.MESSAGE_TEXT }}" \
                 -d channel=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
         echo TS=$($response | jq -r ".ts") >> $GITHUB_ENV
-        sleep 1
+
+    - name: Check status and Send again curl
+      if: inputs.FILENAME != ''
+      shell: bash
+      run: |
+        echo "Send file({{ inputs.FILENAME }}) to Slack"
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -F file=@${{ inputs.FILENAME }} \
-                -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
                 -F thread_ts=${{ env.TS }} \
                 -F channels=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/files.upload | sleep ${{ inputs.TIMEOUT }})
+                https://slack.com/api/files.upload)
         echo $response
