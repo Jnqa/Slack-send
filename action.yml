@@ -40,7 +40,7 @@ runs:
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
         echo $response
-        TS=$($response | jq -r ".ts") 
+        TS=$(echo $response | jq -r ".ts") 
         echo TS="$TS" >> $GITHUB_ENV
 
     - name: Check status and Send again curl
