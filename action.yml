@@ -33,7 +33,7 @@ runs:
     - name: Send via curl
       shell: bash
       run: |
-        response=$(curl --connect-timeout 74 \
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
         -F file=@${{ inputs.FILENAME }} \
         -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
         -F channels=${{ inputs.CHANNELS }} \
@@ -43,18 +43,20 @@ runs:
 
     - name: Check status
       if: env.STATUS != 'true'
-      shell: bash
+      shell: Send again curl
       run: |
-        response=$(curl --connect-timeout 74 \
-                -d text="${{ inputs.MESSAGE_TEXT }}${{ inputs.ERROR_TEXT }}" \
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
+                -d text="${{ inputs.MESSAGE_TEXT }}" \
                 -d channel=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
         echo TS=$($response | jq -r ".ts") >> $GITHUB_ENV
         sleep 5
-        response=$(curl --connect-timeout 74 \
-                -d text=":card_file_box:" \
-                -d ts=${{ env.TS }} \
-                -d channel=${{ inputs.CHANNELS }} \
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
+                -F file=@${{ inputs.FILENAME }} \
+                -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
+                -F thread_ts=${{ env.TS }}
+                -F channels=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/chat.postMessage)
+                https://slack.com/api/files.upload | sleep ${{ inputs.TIMEOUT }})
+                echo STATUS=$($response | jq -r ".ok") >> $GITHUB_ENV
