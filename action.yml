@@ -30,20 +30,8 @@ inputs:
 runs:
   using: "composite"
   steps: 
-    - name: Send via curl
+    - name: Check status and Send again curl
       shell: bash
-      run: |
-        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
-        -F file=@${{ inputs.FILENAME }} \
-        -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
-        -F channels=${{ inputs.CHANNELS }} \
-        -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-        https://slack.com/api/files.upload | sleep ${{ inputs.TIMEOUT }})
-        echo STATUS=$($response | jq -r ".ok") >> $GITHUB_ENV
-
-    - name: Check status
-      if: env.STATUS != 'true'
-      shell: Send again curl
       run: |
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -d text="${{ inputs.MESSAGE_TEXT }}" \
