@@ -39,12 +39,12 @@ runs:
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
         echo TS=$($response | jq -r ".ts") >> $GITHUB_ENV
-        sleep 5
+        sleep 1
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -F file=@${{ inputs.FILENAME }} \
                 -F "initial_comment=${{ inputs.MESSAGE_TEXT }}" \
-                -F thread_ts=${{ env.TS }}
+                -F thread_ts=${{ env.TS }} \
                 -F channels=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload | sleep ${{ inputs.TIMEOUT }})
-                echo STATUS=$($response | jq -r ".ok") >> $GITHUB_ENV
+        echo $response
