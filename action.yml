@@ -42,7 +42,7 @@ runs:
         echo STATUS=$($response | jq -r ".ok") >> $GITHUB_ENV
 
     - name: Check status
-      if: env.STATUS != "true"
+      if: env.STATUS != 'true'
       shell: bash
       run: |
         response=$(curl --connect-timeout 74 \
