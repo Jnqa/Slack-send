@@ -25,6 +25,10 @@ inputs:
     description: 'Message, if file was not uploaded'
     required: false
     default: '⚠ Ошибка прикрепления файла'
+  TS:
+    description: 'Timestamp for reply in thread'
+    required: false
+    default: ''
 outputs:
   TS:
     description: "Output timestamp"
@@ -35,6 +39,7 @@ runs:
   using: "composite"
   steps: 
     - name: Send Text
+      if: inputs.TS == ''
       shell: bash
       run: |
         echo "Send Message to Slack"
@@ -46,6 +51,22 @@ runs:
         echo $response
         TS=$(echo $response | jq -r ".ts") 
         echo TS="$TS" >> $GITHUB_ENV
+      
+    - name: Send Text in thread
+      if: inputs.TS != ''
+      shell: bash
+      run: |
+        echo "Send Message to Slack"
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
+                -d text="${{ inputs.MESSAGE_TEXT }}" \
+                -d thread_ts="${{ inputs.TS }}" \
+                -d channel=${{ inputs.CHANNELS }} \
+                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                https://slack.com/api/chat.postMessage)
+        echo $response
+        TS=$(echo $response | jq -r ".ts") 
+        echo TS="$TS" >> $GITHUB_ENV
+
 
     - name: Check status and Send again curl
       if: inputs.FILENAME != ''
@@ -59,4 +80,17 @@ runs:
                 -F channels=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/files.upload)
+        echo $response
+
+    - name: Reaction test
+      shell: bash
+      run: |
+        echo "Send Reaction" 
+        echo "to ts=${{ env.TS }}"
+        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
+                -d name="cheza"
+                -d timestamp=${{ env.TS }} \
+                -d channel=${{ inputs.CHANNELS }} \
+                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+                https://slack.com/api/reactions.add)
         echo $response
