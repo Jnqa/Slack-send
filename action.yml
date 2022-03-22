@@ -33,12 +33,17 @@ inputs:
     description: 'Message, if file was not uploaded'
     required: false
     default: ':hourglass_flowing_sand: Прикрепление файла...'
+outputs:
+  TS:
+    description: "Output timestamp"
+    value: ${{ env.TS }}
 
 
 runs:
   using: "composite"
   steps: 
-    - name: Send via curl
+    - name: Send Text
+      id: send-message
       shell: bash
       run: |
         BLOCKS='[{"type": "section", 
