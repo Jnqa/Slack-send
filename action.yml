@@ -25,6 +25,10 @@ inputs:
     description: 'Message, if file was not uploaded'
     required: false
     default: '⚠ Ошибка прикрепления файла'
+outputs:
+  TS:
+    description: "Output timestamp"
+    value: ${{ env.TS }}
 
 
 runs:
