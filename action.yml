@@ -70,7 +70,9 @@ runs:
     - name: Output ts
       shell: bash
       id: ts-out
-      run: echo "::set-output name=TS::$(echo ${{ env.TS }})"
+      run: |
+        echo TS=${{ env.TS }}
+        echo "::set-output name=TS::$(echo ${{ env.TS }})"
 
     - name: Check status and Send again curl
       if: inputs.FILENAME != ''
