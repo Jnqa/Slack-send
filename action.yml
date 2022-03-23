@@ -92,7 +92,7 @@ runs:
         echo "Send Reaction" 
         echo "to ts=${{ env.TS }}"
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
-                -d name="cheza"
+                -d name="cheza" \
                 -d timestamp=${{ env.TS }} \
                 -d channel=${{ inputs.CHANNELS }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
