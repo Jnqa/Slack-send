@@ -89,15 +89,15 @@ runs:
                 https://slack.com/api/files.upload)
         echo $response
 
-    - name: Reaction test
-      shell: bash
-      run: |
-        echo "Send Reaction" 
-        echo "to ts=${{ env.TS }}"
-        response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
-                -d name="cheza" \
-                -d timestamp=${{ env.TS }} \
-                -d channel=${{ inputs.CHANNELS }} \
-                -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
-                https://slack.com/api/reactions.add)
-        echo $response
+    # - name: Reaction test
+    #   shell: bash
+    #   run: |
+    #     echo "Send Reaction" 
+    #     echo "to ts=${{ env.TS }}"
+    #     response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
+    #             -d name="cheza" \
+    #             -d timestamp=${{ env.TS }} \
+    #             -d channel=${{ inputs.CHANNELS }} \
+    #             -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
+    #             https://slack.com/api/reactions.add)
+    #     echo $response
