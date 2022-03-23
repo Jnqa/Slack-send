@@ -30,7 +30,7 @@ inputs:
     required: false
     default: ''
 outputs:
-  TS:
+  ts:
     description: "Output timestamp"
     value: ${{ steps.tsd.outputs.TS }}
 
@@ -72,7 +72,8 @@ runs:
       id: ts-out
       run: |
         echo TS=${{ env.TS }}
-        echo "::set-output name=TS::$(echo ${{ env.TS }})"
+        TS=${{ env.TS }}
+        echo "::set-output name=ts::$(echo $TS)"
 
     - name: Check status and Send again curl
       if: inputs.FILENAME != ''
