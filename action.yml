@@ -32,7 +32,7 @@ inputs:
 outputs:
   TS:
     description: "Output timestamp"
-    value: ${{ env.TS }}
+    value: ${{ steps.tsd.outputs.TS }}
 
 
 runs:
@@ -67,6 +67,10 @@ runs:
         TS=$(echo $response | jq -r ".ts") 
         echo TS="$TS" >> $GITHUB_ENV
 
+    - name: Output ts
+      shell: bash
+      id: ts-out
+      run: echo "::set-output name=TS::$(echo ${{ env.TS }})"
 
     - name: Check status and Send again curl
       if: inputs.FILENAME != ''
