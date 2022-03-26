@@ -29,6 +29,10 @@ inputs:
     description: 'Timestamp for reply in thread'
     required: false
     default: ''
+  REACTION:
+    description: 'Reaction on message'
+    required: false
+    default: ''
 outputs:
   ts:
     description: "Output timestamp"
@@ -93,13 +97,14 @@ runs:
                 https://slack.com/api/files.upload)
         echo $response
 
-    - name: Reaction test
+    - name: REACTION test
+      if: inputs.REACTION != ''
       shell: bash
       run: |
         echo "Send Reaction" 
         echo "to ts=${{ env.TS }} in ${{ env.CHANNEL }}"
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
-                -d name="cheza" \
+                -d name="${{ inputs.REACTION }}" \
                 -d timestamp=${{ env.TS }} \
                 -d channel=${{ env.CHANNEL }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
