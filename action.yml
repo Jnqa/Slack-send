@@ -51,6 +51,8 @@ runs:
         echo $response
         TS=$(echo $response | jq -r ".ts") 
         echo TS="$TS" >> $GITHUB_ENV
+        CHANNEL=$(echo $response | jq -r ".channel") 
+        echo CHANNEL=$CHANNEL >> $GITHUB_ENV
       
     - name: Send Text in thread
       if: inputs.TS != ''
@@ -67,7 +69,7 @@ runs:
         TS=$(echo $response | jq -r ".ts") 
         echo TS="$TS" >> $GITHUB_ENV
         CHANNEL=$(echo $response | jq -r ".channel") 
-        echo CHANNEL="$CHANNEL" >> $GITHUB_ENV
+        echo CHANNEL=$CHANNEL >> $GITHUB_ENV
 
     - name: Output ts
       shell: bash
@@ -95,7 +97,7 @@ runs:
       shell: bash
       run: |
         echo "Send Reaction" 
-        echo "to ts=${{ env.TS }}"
+        echo "to ts=${{ env.TS }} in ${{ env.CHANNEL }}"
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -d name="cheza" \
                 -d timestamp=${{ env.TS }} \
