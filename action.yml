@@ -66,6 +66,8 @@ runs:
         echo $response
         TS=$(echo $response | jq -r ".ts") 
         echo TS="$TS" >> $GITHUB_ENV
+        CHANNEL=$(echo $response | jq -r ".channel") 
+        echo CHANNEL="$CHANNEL" >> $GITHUB_ENV
 
     - name: Output ts
       shell: bash
@@ -97,7 +99,7 @@ runs:
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -d name="cheza" \
                 -d timestamp=${{ env.TS }} \
-                -d channel=${{ inputs.CHANNELS }} \
+                -d channel=${{ env.CHANNEL }} \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/reactions.add)
         echo $response
