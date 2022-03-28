@@ -54,7 +54,8 @@ runs:
         response=$(curl --connect-timeout ${{ inputs.TIMEOUT }} \
                 -d text="${{ inputs.MESSAGE_TEXT }}" \
                 -d channel=${{ inputs.CHANNELS }} \
-                -d icon_emoji=${{ inputs.BOTPIC }} \
+                -d as_user="false" \
+                -d icon_emoji="${{ inputs.BOTPIC }}" \
                 -H "Authorization: Bearer ${{ inputs.SLACK_TOKEN }}" \
                 https://slack.com/api/chat.postMessage)
         echo $response
